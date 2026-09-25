@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Автопарк — каталог</title>
+    <style>
+        :root { --ink: #172033; --muted: #718096; --accent: #ff6b35; --soft: #fff4ee; }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; color: var(--ink); font-family: Arial, sans-serif; background: #f7f9fc; }
+        .page { max-width: 1120px; margin: 0 auto; padding: 42px 24px 70px; }
+        .hero { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 34px; }
+        .eyebrow { margin: 0 0 10px; color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+        h1 { margin: 0; font-size: clamp(32px, 5vw, 56px); line-height: 1; letter-spacing: -2px; }
+        .intro { max-width: 360px; margin: 0; color: var(--muted); line-height: 1.6; }
+        .search { display: flex; gap: 10px; padding: 8px; margin-bottom: 34px; background: white; border: 1px solid #e7ebf2; border-radius: 16px; box-shadow: 0 10px 30px #20304d0c; }
+        input { width: 100%; min-width: 0; padding: 14px 16px; color: var(--ink); font: inherit; background: #fafbfe; border: 1px solid transparent; border-radius: 10px; outline: none; }
+        input:focus { border-color: #ffb196; background: white; }
+        button { border: 0; border-radius: 10px; color: white; background: var(--accent); padding: 0 22px; font: inherit; font-weight: 700; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 8px 18px #ff6b3550; }
+        .cars { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+        .car { min-height: 190px; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; background: white; border: 1px solid #e7ebf2; border-radius: 20px; box-shadow: 0 14px 30px #20304d0b; }
+        .car h2 { margin: 0 0 8px; font-size: 23px; }
+        .car h3 { margin: 0; color: var(--muted); font-size: 14px; font-weight: 500; }
+        .price { align-self: flex-start; margin-top: 22px; padding: 9px 13px; color: #d94b1d; background: var(--soft); font-size: 16px; }
+        .footer { margin-top: 42px; color: var(--muted); font-size: 14px; }
+        @media (max-width: 640px) { .page { padding: 28px 16px 48px; } .hero { display: block; } .intro { margin-top: 16px; } .search { flex-wrap: wrap; } button { width: 100%; padding: 14px; } }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <header class="hero">
+            <div><p class="eyebrow">Коллекция автомобилей</p><h1>Найди свой<br>идеальный авто.</h1></div>
+            <p class="intro">Собрали интересные автомобили в одном месте. Выберите модель и узнайте больше.</p>
+        </header>
+        <form class="search" method="POST">
+            {% csrf_token %}
+            {{form.name}}
+            <button type="submit">Поиск</button>
+        </form>
+        <section class="cars">
+            {%for car in cars%}
+                <article class="car">
+                    <div><h2>{{car.name}}</h2><h3>{{car.category}}</h3></div>
+                    <button class="price">{{car.price}}</button>
+                </article>
+            {%endfor%}
+        </section>
+        <p class="footer">Это моя первая страница на Django!</p>
+    </main>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; color: #172033; font-family: Arial, sans-serif; background: #172033; }
+        .card { width: min(100%, 440px); padding: 44px; background: #fff; border-radius: 24px; box-shadow: 0 24px 70px #00000045; }
+        .mark { width: 48px; height: 48px; display: grid; place-items: center; margin-bottom: 28px; border-radius: 14px; color: white; background: #ff6b35; font-size: 21px; font-weight: 800; }
+        h1 { margin: 0 0 10px; font-size: 36px; letter-spacing: -1px; }
+        .subtitle { margin: 0 0 30px; color: #718096; line-height: 1.5; }
+        form { display: grid; gap: 14px; }
+        input { width: 100%; padding: 14px 15px; color: #172033; font: inherit; background: #f7f9fc; border: 1px solid #e1e6ef; border-radius: 10px; outline: none; }
+        input:focus { border-color: #ff6b35; box-shadow: 0 0 0 4px #ff6b351c; background: white; }
+        button { padding: 14px; margin-top: 8px; border: 0; border-radius: 10px; color: white; background: #ff6b35; font: inherit; font-weight: 700; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 22px #ff6b3555; }
+        @media (max-width: 480px) { .card { padding: 30px 24px; } }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <div class="mark">A</div>
+        <h1>Регистрация</h1>
+        <p class="subtitle">Это мой первый Django сайт</p>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="username">
+            <input type="password" name="password">
+            <button type="submit">Регистрация</button>
+        </form>
+    </main>
+</body>
+</html>
