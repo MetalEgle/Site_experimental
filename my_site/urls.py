@@ -22,10 +22,9 @@ from about.views import about, form_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", home),
+    path("", home, name="home"),
     path("home", home),
-    path("login/", login_view),
-    path("about/", about),
-    path("form/", form_view)
+    path("login/", login_view, name="login"),
+    path("about/", about, name="about"),
+    path("form/", form_view, name="add_product"),
 ]
-

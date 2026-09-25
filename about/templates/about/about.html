@@ -1,50 +1,92 @@
 <!DOCTYPE html>
+{% load humanize %}
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Автопарк — каталог</title>
     <style>
-        :root { --ink: #172033; --muted: #718096; --accent: #ff6b35; --soft: #fff4ee; }
+        :root { --ink: #172033; --muted: #718096; --accent: #ff6b35; --soft: #fff1e8; --card: #f2eee7; --card-border: #e6ded2; }
         * { box-sizing: border-box; }
-        body { margin: 0; min-height: 100vh; color: var(--ink); font-family: Arial, sans-serif; background: #f7f9fc; }
-        .page { max-width: 1120px; margin: 0 auto; padding: 42px 24px 70px; }
+        body { margin: 0; min-height: 100vh; color: var(--ink); font-family: Arial, sans-serif; }
+        .page { max-width: 1120px; margin: 0 auto; padding: 112px 24px 70px; }
         .hero { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 34px; }
         .eyebrow { margin: 0 0 10px; color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
-        h1 { margin: 0; font-size: clamp(32px, 5vw, 56px); line-height: 1; letter-spacing: -2px; }
-        .intro { max-width: 360px; margin: 0; color: var(--muted); line-height: 1.6; }
-        .search { display: flex; gap: 10px; padding: 8px; margin-bottom: 34px; background: white; border: 1px solid #e7ebf2; border-radius: 16px; box-shadow: 0 10px 30px #20304d0c; }
-        input { width: 100%; min-width: 0; padding: 14px 16px; color: var(--ink); font: inherit; background: #fafbfe; border: 1px solid transparent; border-radius: 10px; outline: none; }
-        input:focus { border-color: #ffb196; background: white; }
-        button { border: 0; border-radius: 10px; color: white; background: var(--accent); padding: 0 22px; font: inherit; font-weight: 700; cursor: pointer; transition: transform .2s, box-shadow .2s; }
-        button:hover { transform: translateY(-2px); box-shadow: 0 8px 18px #ff6b3550; }
+        .hero h1 { margin: 0; color: #fff; font-size: clamp(32px, 5vw, 56px); line-height: 1; letter-spacing: -2px; }
+        .intro { max-width: 360px; margin: 0; color: #d2d9e8; line-height: 1.6; }
+        .search { display: grid; grid-template-columns: minmax(220px, 1fr) auto; gap: 14px; align-items: center; padding: 16px; margin-bottom: 34px; background: #e9e5df; border: 1px solid #d8d2ca; border-radius: 18px; box-shadow: 0 10px 30px #11182712; }
+        .search-query { display: grid; gap: 7px; color: #536078; font-size: 13px; font-weight: 700; }
+        .search-query input { width: 100%; min-width: 0; padding: 13px 15px; color: var(--ink); font: inherit; background: #f7f4ef; border: 1px solid #ded8ce; border-radius: 10px; outline: none; }
+        .search-query input:focus { border-color: #ffb196; background: #fbf9f5; box-shadow: 0 0 0 3px #ff6b3514; }
+        .body-filters { grid-column: 1 / -1; min-width: 0; padding: 0; margin: 0; border: 0; }
+        .body-filters legend { margin-bottom: 10px; color: #536078; font-size: 13px; font-weight: 700; }
+        .body-filter-options { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 0; list-style: none; }
+        .body-filter-options li { margin: 0; }
+        .body-filter-options label { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 7px 12px; border: 1px solid #d8d2ca; border-radius: 999px; color: #536078; background: #f7f4ef; font-size: 13px; font-weight: 700; cursor: pointer; transition: color .2s, background .2s, border-color .2s, transform .2s; }
+        .body-filter-options label:has(input:checked) { border-color: #ff6b35; color: #a94220; background: #fff1e8; }
+        .body-filter-options label:hover { border-color: #ffb196; transform: translateY(-1px); }
+        .body-filter-options input { width: 15px; height: 15px; margin: 0; accent-color: var(--accent); }
+        .search button { min-height: 46px; align-self: end; padding: 0 22px; border: 0; border-radius: 10px; color: white; background: var(--accent); font: inherit; font-weight: 700; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+        .search button:hover { transform: translateY(-2px); box-shadow: 0 8px 18px #ff6b3550; }
+        .search-reset { align-self: end; padding: 13px 15px; color: #536078; font-size: 13px; font-weight: 700; text-decoration: none; }
+        .search-reset:hover { color: #b64824; }
+        .search-actions { display: flex; align-items: center; gap: 6px; }
         .cars { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
-        .car { min-height: 190px; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; background: white; border: 1px solid #e7ebf2; border-radius: 20px; box-shadow: 0 14px 30px #20304d0b; }
-        .car h2 { margin: 0 0 8px; font-size: 23px; }
-        .car h3 { margin: 0; color: var(--muted); font-size: 14px; font-weight: 500; }
-        .price { align-self: flex-start; margin-top: 22px; padding: 9px 13px; color: #d94b1d; background: var(--soft); font-size: 16px; }
-        .footer { margin-top: 42px; color: var(--muted); font-size: 14px; }
-        @media (max-width: 640px) { .page { padding: 28px 16px 48px; } .hero { display: block; } .intro { margin-top: 16px; } .search { flex-wrap: wrap; } button { width: 100%; padding: 14px; } }
+        .car { position: relative; min-height: 208px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; padding: 25px; background: linear-gradient(145deg, #f5f1eb 0%, var(--card) 72%); border: 1px solid var(--card-border); border-radius: 22px; box-shadow: 0 14px 30px #11182718; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+        .car::before { position: absolute; top: 0; left: 24px; width: 54px; height: 3px; border-radius: 0 0 4px 4px; background: linear-gradient(90deg, var(--accent), #ffb16f); content: ""; }
+        .car:hover { transform: translateY(-5px); border-color: #e9a17f; box-shadow: 0 22px 38px #11182726; }
+        .car h2 { margin: 0 0 14px; color: #202b40; font-size: 23px; letter-spacing: -.5px; }
+        .product-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+        .product-tag { display: inline-flex; align-items: center; padding: 7px 11px; border: 1px solid #ded8ce; border-radius: 999px; color: #657084; background: #eae6df; font-size: 12px; font-weight: 700; letter-spacing: .3px; }
+        .product-tag--body { border-color: #f0d2c2; color: #b64824; background: #fff1e8; }
+        .price { align-self: flex-start; display: grid; gap: 3px; margin: 24px 0 0; padding: 10px 14px; border: 1px solid #f0d2c2; border-radius: 12px; color: #b64824; background: var(--soft); }
+        .price-label { color: #9b725f; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
+        .price-value { font-size: 19px; font-weight: 800; letter-spacing: -.3px; }
+        .footer { margin-top: 42px; color: #d2d9e8; font-size: 14px; }
+        @media (max-width: 640px) { .page { padding: 112px 16px 48px; } .hero { display: block; } .intro { margin-top: 16px; } .search { grid-template-columns: 1fr; } .search-actions { width: 100%; } .search-actions button { flex: 1; padding: 14px; } }
     </style>
 </head>
 <body>
+    {% include "includes/ambient-background.html" %}
     <main class="page">
+        {% include "includes/navigation.html" %}
         <header class="hero">
             <div><p class="eyebrow">Коллекция автомобилей</p><h1>Найди свой<br>идеальный авто.</h1></div>
             <p class="intro">Собрали интересные автомобили в одном месте. Выберите модель и узнайте больше.</p>
         </header>
-        <form class="search" method="POST">
-            {% csrf_token %}
-            {{form.name}}
-            <button type="submit">Поиск</button>
+        <form class="search" method="GET">
+            <label class="search-query">
+                {{ form.name.label }}
+                {{ form.name }}
+            </label>
+            <div class="search-actions">
+                <button type="submit">Найти авто</button>
+                <a class="search-reset" href="{% url 'about' %}">Сбросить</a>
+            </div>
+            <fieldset class="body-filters">
+                <legend>{{ form.body_types.label }}</legend>
+                {{ form.body_types }}
+            </fieldset>
         </form>
         <section class="cars">
-            {%for car in cars%}
+            {% for product in products %}
                 <article class="car">
-                    <div><h2>{{car.name}}</h2><h3>{{car.category}}</h3></div>
-                    <button class="price">{{car.price}}</button>
+                    <div class="car-details">
+                        <h2>{{ product.name }}</h2>
+                        <div class="product-tags">
+                            <span class="product-tag">{{ product.category }}</span>
+                            <span class="product-tag product-tag--body">{{ product.get_body_display }}</span>
+                        </div>
+                    </div>
+                    <p class="price">
+                        <span class="price-label">Стоимость</span>
+                        <span class="price-value">{{ product.price|intcomma }}&nbsp;€</span>
+                    </p>
                 </article>
-            {%endfor%}
+            {% endfor %}
+            {% if not products %}
+                <p class="intro">По вашему запросу автомобили не найдены. Попробуйте изменить фильтры.</p>
+            {% endif %}
         </section>
         <p class="footer">Это моя первая страница на Django!</p>
     </main>

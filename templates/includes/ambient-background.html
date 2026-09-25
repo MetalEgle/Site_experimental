@@ -1,0 +1,108 @@
+<style>
+    html {
+        min-height: 100%;
+        background: #172033;
+    }
+
+    body {
+        position: relative;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #172033 0%, #273b63 100%);
+        background-attachment: fixed;
+    }
+
+    .ambient-lights {
+        position: fixed;
+        z-index: 0;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .ambient-orb {
+        position: absolute;
+        display: block;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        opacity: .8;
+        will-change: transform, opacity;
+    }
+
+    .ambient-orb--one {
+        top: -20%;
+        left: 66%;
+        width: clamp(300px, 48vw, 680px);
+        background: radial-gradient(circle, #ff713baa 0%, #ff713b54 36%, #ff713b00 72%);
+    }
+
+    .ambient-orb--two {
+        top: 34%;
+        left: -18%;
+        width: clamp(260px, 40vw, 560px);
+        background: radial-gradient(circle, #ff8a5b82 0%, #ff8a5b38 40%, #ff8a5b00 72%);
+    }
+
+    .ambient-orb--three {
+        top: 62%;
+        right: -12%;
+        width: clamp(220px, 32vw, 440px);
+        background: radial-gradient(circle, #ff5d354f 0%, #ff5d3524 42%, #ff5d3500 74%);
+    }
+
+    .hero,
+    .page,
+    .card {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+
+<div class="ambient-lights" aria-hidden="true">
+    <span class="ambient-orb ambient-orb--one"></span>
+    <span class="ambient-orb ambient-orb--two"></span>
+    <span class="ambient-orb ambient-orb--three"></span>
+</div>
+
+<script>
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const ambientOrbs = [...document.querySelectorAll(".ambient-orb")];
+    const orbMotion = [
+        { horizontal: 38, vertical: 30, scale: 0.12, duration: 18000, phase: 0 },
+        { horizontal: 46, vertical: 34, scale: 0.1, duration: 22000, phase: 2.1 },
+        { horizontal: 32, vertical: 40, scale: 0.14, duration: 20000, phase: 4.2 },
+    ];
+    let animationFrameId;
+
+    function animateAmbientOrbs(timestamp) {
+        ambientOrbs.forEach((orb, index) => {
+            const motion = orbMotion[index];
+            const progress = (timestamp / motion.duration) * Math.PI * 2 + motion.phase;
+            const horizontal = Math.sin(progress) * motion.horizontal;
+            const vertical = Math.cos(progress * 0.8) * motion.vertical;
+            const scale = 1 + Math.sin(progress * 0.65) * motion.scale;
+            const opacity = 0.72 + (Math.sin(progress * 0.55) + 1) * 0.12;
+
+            orb.style.transform = `translate3d(${horizontal}px, ${vertical}px, 0) scale(${scale})`;
+            orb.style.opacity = opacity;
+        });
+
+        animationFrameId = window.requestAnimationFrame(animateAmbientOrbs);
+    }
+
+    function updateAmbientMotion() {
+        window.cancelAnimationFrame(animationFrameId);
+
+        if (motionPreference.matches) {
+            ambientOrbs.forEach((orb) => {
+                orb.style.removeProperty("transform");
+                orb.style.removeProperty("opacity");
+            });
+            return;
+        }
+
+        animationFrameId = window.requestAnimationFrame(animateAmbientOrbs);
+    }
+
+    updateAmbientMotion();
+    motionPreference.addEventListener("change", updateAmbientMotion);
+</script>

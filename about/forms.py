@@ -1,19 +1,33 @@
 from django import forms
+from .models import Product
+
 
 class NameForm(forms.Form):
-    name = forms.CharField(min_length=3, max_length=50)
+    name = forms.CharField( max_length=50)
     category = forms.CharField(min_length=1)
     price = forms.IntegerField(min_value=1)
+    body = forms.ChoiceField(
+        choices=Product.BODY_CHOICES,
+        label="Кузов",
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
 
-    
-    # email = forms.EmailField()
-    # def clean_username(self):
-    #     name = self.cleaned_data["username"]
 
-        # if any(char.isdigit() for char in username):
-        #     raise forms.ValidationError("Имя не должно содержать цифр")
-        # if  username[0].islower():
-        #     raise forms.ValidationError("Должно начинаться с большой буквы")
-        # return username
 class SearchForm(forms.Form):
-    name = forms.CharField( max_length=50, required=False)
+    name = forms.CharField(
+        max_length=50,
+        required=False,
+        label="Модель или марка",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Например, Aventador или Lamborghini",
+                "aria-label": "Название модели или марка",
+            }
+        ),
+    )
+    body_types = forms.MultipleChoiceField(
+        choices=Product.BODY_CHOICES,
+        required=False,
+        label="Кузов",
+        widget=forms.CheckboxSelectMultiple(attrs={"class": "body-filter-options"}),
+    )

@@ -6,18 +6,30 @@
     <title>Добавить автомобиль</title>
     <style>
         * { box-sizing: border-box; }
-        body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; color: #172033; font-family: Arial, sans-serif; background: linear-gradient(135deg, #fff4ee, #f2f5fb); }
+        body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 100px 24px 24px; color: #172033; font-family: Arial, sans-serif; }
         .card { width: min(100%, 520px); padding: clamp(26px, 6vw, 48px); background: #fff; border: 1px solid #e7ebf2; border-radius: 24px; box-shadow: 0 24px 60px #20304d18; }
         .eyebrow { margin: 0 0 10px; color: #ff6b35; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
         h1 { margin: 0 0 30px; font-size: clamp(28px, 5vw, 40px); letter-spacing: -1px; }
         form p { display: flex; flex-direction: column; gap: 8px; margin: 0 0 18px; color: #536078; font-size: 14px; font-weight: 700; }
-        input { width: 100%; padding: 13px 14px; color: #172033; font: inherit; border: 1px solid #dfe5ee; border-radius: 10px; outline: none; }
-        input:focus { border-color: #ff6b35; box-shadow: 0 0 0 4px #ff6b351c; }
+        input, select { width: 100%; min-height: 48px; padding: 13px 14px; color: #172033; font: inherit; border: 1px solid #dfe5ee; border-radius: 10px; outline: none; }
+        input { background: #fff; }
+        select { padding-right: 44px; appearance: none; cursor: pointer; background-color: #fff; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='m4 6 4 4 4-4' stroke='%23ff6b35' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; transition: border-color .2s, box-shadow .2s, background-color .2s; }
+        input:focus, select:focus { border-color: #ff6b35; box-shadow: 0 0 0 4px #ff6b351c; }
+        select:hover { border-color: #ffb196; background-color: #fffaf7; }
+        select option { padding: 10px; color: #172033; background: #fffaf7; }
         button { width: 100%; margin-top: 8px; padding: 14px; border: 0; border-radius: 10px; color: white; background: #172033; font: inherit; font-weight: 700; cursor: pointer; transition: background .2s, transform .2s; }
         button:hover { background: #ff6b35; transform: translateY(-2px); }
+        .toast { position: fixed; z-index: 20; top: 92px; left: 50%; width: min(440px, calc(100% - 32px)); padding: 16px 20px; border: 1px solid #83d6ae; border-radius: 14px; color: #14583b; background: #e9fff3; box-shadow: 0 14px 36px #10281f35; font-size: 15px; font-weight: 700; text-align: center; transform: translateX(-50%); animation: toast-life 3.2s ease forwards; }
+        @keyframes toast-life { 0% { opacity: 0; translate: 0 -12px; } 10% { opacity: 1; translate: 0 0; } 76% { opacity: 1; translate: 0 0; } 100% { opacity: 0; translate: 0 -8px; } }
+        @media (prefers-reduced-motion: reduce) { .toast { animation-duration: .01ms; } }
     </style>
 </head>
 <body>
+    {% include "includes/ambient-background.html" %}
+    {% include "includes/navigation.html" %}
+    {% for message in messages %}
+        <div class="toast" role="status" aria-live="polite">{{ message }}</div>
+    {% endfor %}
     <main class="card">
         <p class="eyebrow">Новая запись</p>
         <h1>Введите авто</h1>
@@ -27,5 +39,10 @@
             <button type="submit">Отправить</button>
         </form>
     </main>
+    <script>
+        document.querySelectorAll(".toast").forEach((toast) => {
+            toast.addEventListener("animationend", () => toast.remove(), { once: true });
+        });
+    </script>
 </body>
 </html>
