@@ -51,7 +51,28 @@
         .load-more:focus-visible { outline: 3px solid #ffd1c0; outline-offset: 3px; }
         .load-more[aria-busy="true"] { opacity: .7; pointer-events: none; }
         .footer { margin-top: 42px; color: #d2d9e8; font-size: 14px; }
-        @media (max-width: 640px) { .page { padding: 112px 16px 48px; } .hero { display: block; } .intro { margin-top: 16px; } .search { grid-template-columns: 1fr; } .search-actions { width: 100%; } .search-actions button { flex: 1; padding: 14px; } }
+        @media (max-width: 760px) {
+            .hero { align-items: flex-start; flex-direction: column; gap: 14px; }
+            .intro { max-width: 560px; }
+        }
+        @media (max-width: 640px) {
+            .page { padding: 112px 16px 48px; }
+            .hero { margin-bottom: 24px; }
+            .search { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 13px; }
+            .search-actions { width: 100%; }
+            .search-actions button { flex: 1; padding: 14px; }
+            .search-reset { padding-right: 10px; padding-left: 10px; }
+        }
+        @media (max-width: 480px) {
+            .page { padding-right: 14px; padding-left: 14px; }
+            .hero h1 { font-size: clamp(30px, 9vw, 42px); }
+            .cars { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+            .car { min-height: 0; padding: 20px; }
+            .car-image, .car-image-placeholder { width: calc(100% + 40px); height: clamp(160px, 55vw, 220px); margin: -20px -20px 20px; }
+            .price { margin-top: 20px; }
+            .catalog-footer { margin-top: 24px; }
+            .load-more { width: min(100%, 280px); }
+        }
     </style>
 </head>
 <body>

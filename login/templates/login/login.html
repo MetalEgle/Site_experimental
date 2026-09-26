@@ -16,7 +16,15 @@
         input:focus { border-color: #ff6b35; box-shadow: 0 0 0 4px #ff6b351c; background: white; }
         button { padding: 14px; margin-top: 8px; border: 0; border-radius: 10px; color: white; background: #ff6b35; font: inherit; font-weight: 700; cursor: pointer; transition: transform .2s, box-shadow .2s; }
         button:hover { transform: translateY(-2px); box-shadow: 0 10px 22px #ff6b3555; }
-        @media (max-width: 480px) { .card { padding: 30px 24px; } }
+        @media (max-width: 520px) {
+            body { padding: 120px 14px 28px; }
+            .card { padding: 30px 24px; border-radius: 20px; }
+        }
+        @media (max-width: 360px) {
+            body { padding-right: 10px; padding-left: 10px; }
+            .card { padding: 26px 20px; }
+            h1 { font-size: 32px; }
+        }
     </style>
 </head>
 <body>

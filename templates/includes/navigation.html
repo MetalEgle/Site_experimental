@@ -68,13 +68,25 @@
 
     @media (max-width: 520px) {
         .site-nav {
-            top: 16px;
-            gap: 8px;
+            top: max(12px, env(safe-area-inset-top));
+            gap: 6px;
+            width: calc(100% - 24px);
         }
 
         .site-nav a {
-            padding: 9px 12px;
-            font-size: 12px;
+            padding: 9px 11px;
+            font-size: clamp(11px, 3vw, 12px);
+        }
+    }
+
+    @media (max-width: 360px) {
+        .site-nav {
+            gap: 5px;
+        }
+
+        .site-nav a {
+            padding: 8px 9px;
+            font-size: 11px;
         }
     }
 
