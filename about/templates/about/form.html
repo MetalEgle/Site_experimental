@@ -13,6 +13,9 @@
         form p { display: flex; flex-direction: column; gap: 8px; margin: 0 0 18px; color: #536078; font-size: 14px; font-weight: 700; }
         input, select { width: 100%; min-height: 48px; padding: 13px 14px; color: #172033; font: inherit; border: 1px solid #dfe5ee; border-radius: 10px; outline: none; }
         input { background: #fff; }
+        input[type="file"] { padding: 8px; color: #536078; background: #f7f9fc; cursor: pointer; }
+        input[type="file"]::file-selector-button { margin-right: 12px; padding: 8px 12px; border: 0; border-radius: 7px; color: white; background: #172033; font: inherit; font-weight: 700; cursor: pointer; transition: background .2s; }
+        input[type="file"]::file-selector-button:hover { background: #ff6b35; }
         select { padding-right: 44px; appearance: none; cursor: pointer; background-color: #fff; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='m4 6 4 4 4-4' stroke='%23ff6b35' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; transition: border-color .2s, box-shadow .2s, background-color .2s; }
         input:focus, select:focus { border-color: #ff6b35; box-shadow: 0 0 0 4px #ff6b351c; }
         select:hover { border-color: #ffb196; background-color: #fffaf7; }
@@ -33,7 +36,7 @@
     <main class="card">
         <p class="eyebrow">Новая запись</p>
         <h1>Введите авто</h1>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{form.as_p}}
             <button type="submit">Отправить</button>

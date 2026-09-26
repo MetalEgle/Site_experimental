@@ -31,6 +31,13 @@
         gap: 10px;
         width: calc(100% - 32px);
         transform: translateX(-50%);
+        transition: transform .3s cubic-bezier(.2, .75, .25, 1), opacity .3s ease;
+    }
+
+    .site-nav.is-hidden {
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, calc(-100% - 32px));
     }
 
     .site-nav a {
@@ -76,6 +83,10 @@
         ::view-transition-new(root) {
             animation-duration: .01ms;
         }
+
+        .site-nav {
+            transition-duration: .01ms;
+        }
     }
 </style>
 
@@ -85,3 +96,29 @@
     <a href="{% url 'add_product' %}">Добавить авто</a>
     <a href="{% url 'login' %}">Регистрация</a>
 </nav>
+
+<script>
+    const siteNavigation = document.querySelector(".site-nav");
+    const navigationCollisionTarget = document.querySelector(".search, .card");
+
+    function updateNavigationVisibility() {
+        const isAtPageTop = window.scrollY < 40;
+        const targetReachedNavigation = navigationCollisionTarget
+            && navigationCollisionTarget.getBoundingClientRect().top
+                <= siteNavigation.getBoundingClientRect().bottom + 12;
+
+        if (isAtPageTop || !targetReachedNavigation) {
+            siteNavigation.classList.remove("is-hidden");
+        } else if (!siteNavigation.contains(document.activeElement)) {
+            siteNavigation.classList.add("is-hidden");
+        }
+    }
+
+    window.addEventListener("scroll", updateNavigationVisibility, { passive: true });
+    window.addEventListener("resize", updateNavigationVisibility);
+    updateNavigationVisibility();
+
+    siteNavigation.addEventListener("focusin", () => {
+        siteNavigation.classList.remove("is-hidden");
+    });
+</script>

@@ -11,6 +11,11 @@ class NameForm(forms.Form):
         label="Кузов",
         widget=forms.Select(attrs={"class": "form-select"}),
     )
+    image = forms.ImageField(
+        required=False,
+        label="Фото автомобиля",
+        widget=forms.ClearableFileInput(attrs={"accept": "image/*"}),
+    )
 
 
 class SearchForm(forms.Form):

@@ -14,3 +14,4 @@ class Product(models.Model):
     category = models.CharField(max_length=50)
     price = models.IntegerField()
     body = models.CharField(max_length=20, choices=BODY_CHOICES, default="Sedan")
+    image = models.ImageField(upload_to="cars/", blank=True, null=True)

@@ -22,7 +22,7 @@
         .body-filters legend { margin-bottom: 10px; color: #536078; font-size: 13px; font-weight: 700; }
         .body-filter-options { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 0; list-style: none; }
         .body-filter-options li { margin: 0; }
-        .body-filter-options label { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 7px 12px; border: 1px solid #d8d2ca; border-radius: 999px; color: #536078; background: #f7f4ef; font-size: 13px; font-weight: 700; cursor: pointer; transition: color .2s, background .2s, border-color .2s, transform .2s; }
+        .body-filter-options label { display: inline-flex; align-items: center; gap: 7px; min-height: 38px; padding: 7px 12px; border: 1px solid #d8d2ca; border-radius: 999px; color: #536078; background: #f7f4ef; font-size: 13px; font-weight: 700; cursor: pointer; user-select: none; -webkit-user-select: none; transition: color .2s, background .2s, border-color .2s, transform .2s; }
         .body-filter-options label:has(input:checked) { border-color: #ff6b35; color: #a94220; background: #fff1e8; }
         .body-filter-options label:hover { border-color: #ffb196; transform: translateY(-1px); }
         .body-filter-options input { width: 15px; height: 15px; margin: 0; accent-color: var(--accent); }
@@ -33,6 +33,8 @@
         .search-actions { display: flex; align-items: center; gap: 6px; }
         .cars { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
         .car { position: relative; min-height: 208px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; padding: 25px; background: linear-gradient(145deg, #f5f1eb 0%, var(--card) 72%); border: 1px solid var(--card-border); border-radius: 22px; box-shadow: 0 14px 30px #11182718; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+        .car-image { width: calc(100% + 50px); height: 180px; margin: -25px -25px 22px; object-fit: cover; background: linear-gradient(135deg, #e9e5df, #d9d2c7); }
+        .car-image-placeholder { width: calc(100% + 50px); height: 180px; display: grid; place-items: center; margin: -25px -25px 22px; color: #657084; background: radial-gradient(circle at 70% 35%, #ffb16f55, transparent 35%), linear-gradient(135deg, #e9e5df, #d9d2c7); font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
         .car::before { position: absolute; top: 0; left: 24px; width: 54px; height: 3px; border-radius: 0 0 4px 4px; background: linear-gradient(90deg, var(--accent), #ffb16f); content: ""; }
         .car:hover { transform: translateY(-5px); border-color: #e9a17f; box-shadow: 0 22px 38px #11182726; }
         .car h2 { margin: 0 0 14px; color: #202b40; font-size: 23px; letter-spacing: -.5px; }
@@ -42,6 +44,12 @@
         .price { align-self: flex-start; display: grid; gap: 3px; margin: 24px 0 0; padding: 10px 14px; border: 1px solid #f0d2c2; border-radius: 12px; color: #b64824; background: var(--soft); }
         .price-label { color: #9b725f; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
         .price-value { font-size: 19px; font-weight: 800; letter-spacing: -.3px; }
+        .catalog-footer { display: grid; justify-items: center; gap: 14px; margin-top: 30px; }
+        .results-count { margin: 0; color: #d2d9e8; font-size: 14px; }
+        .load-more { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; padding: 0 24px; border: 1px solid #ffffff36; border-radius: 12px; color: #fff; background: #ffffff12; font: inherit; font-weight: 700; line-height: 1; text-align: center; text-decoration: none; backdrop-filter: blur(12px); transition: background .2s, border-color .2s, transform .2s, box-shadow .2s; }
+        .load-more:hover { border-color: #ff8a5b; background: #ff6b35; transform: translateY(-2px); box-shadow: 0 8px 22px #ff6b3540; }
+        .load-more:focus-visible { outline: 3px solid #ffd1c0; outline-offset: 3px; }
+        .load-more[aria-busy="true"] { opacity: .7; pointer-events: none; }
         .footer { margin-top: 42px; color: #d2d9e8; font-size: 14px; }
         @media (max-width: 640px) { .page { padding: 112px 16px 48px; } .hero { display: block; } .intro { margin-top: 16px; } .search { grid-template-columns: 1fr; } .search-actions { width: 100%; } .search-actions button { flex: 1; padding: 14px; } }
     </style>
@@ -71,6 +79,11 @@
         <section class="cars">
             {% for product in products %}
                 <article class="car">
+                    {% if product.image %}
+                        <img class="car-image" src="{{ product.image.url }}" alt="Фото автомобиля {{ product.name }}" loading="lazy">
+                    {% else %}
+                        <div class="car-image-placeholder" aria-label="Фото автомобиля не добавлено">Фото не добавлено</div>
+                    {% endif %}
                     <div class="car-details">
                         <h2>{{ product.name }}</h2>
                         <div class="product-tags">
@@ -88,7 +101,63 @@
                 <p class="intro">По вашему запросу автомобили не найдены. Попробуйте изменить фильтры.</p>
             {% endif %}
         </section>
+        {% if page_obj.paginator.count %}
+            <div class="catalog-footer">
+                <p class="results-count" id="results-count">Показано {{ products|length }} из {{ page_obj.paginator.count }}</p>
+                {% if next_page_query %}
+                    <a class="load-more" id="load-more" href="?{{ next_page_query }}" aria-label="Показать следующие автомобили">Показать ещё</a>
+                {% endif %}
+            </div>
+        {% endif %}
         <p class="footer">Это моя первая страница на Django!</p>
     </main>
+    <script>
+        const loadMoreButton = document.querySelector("#load-more");
+
+        if (loadMoreButton) {
+            loadMoreButton.addEventListener("click", async (event) => {
+                event.preventDefault();
+                const nextPageUrl = loadMoreButton.href;
+                loadMoreButton.setAttribute("aria-busy", "true");
+                loadMoreButton.textContent = "Загружаю...";
+
+                try {
+                    const response = await fetch(nextPageUrl, {
+                        headers: { "X-Requested-With": "XMLHttpRequest" },
+                    });
+                    if (!response.ok) {
+                        throw new Error(`Не удалось загрузить автомобили: ${response.status}`);
+                    }
+
+                    const nextPageHtml = await response.text();
+                    const nextPageDocument = new DOMParser().parseFromString(nextPageHtml, "text/html");
+                    const currentCards = document.querySelector(".cars");
+                    const nextCards = nextPageDocument.querySelectorAll(".cars .car");
+
+                    if (nextCards.length === 0) {
+                        throw new Error("В следующей порции автомобилей нет.");
+                    }
+
+                    nextCards.forEach((card) => currentCards.append(card));
+
+                    const currentCount = currentCards.querySelectorAll(".car").length;
+                    document.querySelector("#results-count").textContent =
+                        `Показано ${currentCount} из {{ page_obj.paginator.count }}`;
+
+                    const nextLoadMoreButton = nextPageDocument.querySelector("#load-more");
+                    if (nextLoadMoreButton) {
+                        loadMoreButton.href = nextLoadMoreButton.href;
+                        loadMoreButton.textContent = "Показать ещё";
+                        loadMoreButton.removeAttribute("aria-busy");
+                    } else {
+                        loadMoreButton.remove();
+                    }
+                } catch (error) {
+                    console.error(error);
+                    window.location.assign(nextPageUrl);
+                }
+            });
+        }
+    </script>
 </body>
 </html>
